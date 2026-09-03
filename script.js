@@ -310,13 +310,14 @@ function buildEraListHtml(targetYear) {
   if (isNaN(targetYear)) return "";
 
   return eraList.map((era) => {
-    const yearsPassed = targetYear - era.year + 1; // 元年は1年目
+    const yearsPassed = targetYear - era.year;
     if (yearsPassed > 0) {
       return `
         <div class="listItem">
           <strong>${era.name}</strong><br>
           <small>元年: ${era.year}年</small><br>
-          <small>${yearsPassed}周年</small>
+          <small>数え年: ${yearsPassed+1}年</small><br>
+          <small>満 ${yearsPassed}周年</small>
         </div>
       `;
     } else {
