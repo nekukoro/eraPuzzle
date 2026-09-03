@@ -1,0 +1,369 @@
+body {
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  margin: 0px;
+  padding: 0px;
+  background-color: #f5f5f7;
+  color: #333;
+}
+
+
+#headerArea {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eee;
+  padding: 10px 0;
+}
+
+#titleText {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.headerBtn {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+button {
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  pointer-events: auto;
+}
+button:hover {
+  background-color: #eee;
+}
+button:disabled {
+  opacity: 0;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+/* メインレイアウト */
+#mainArea {
+  max-width: 90%;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  text-align: center;
+  position: relative;
+}
+
+#actionArea {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+
+.card-container {
+  min-height: 110px;
+  border-radius: 8px;
+  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+#fieldArea {
+  position: relative;
+  min-height: 480px;
+  box-sizing: border-box;
+  border: 1px solid #aaa;
+  background-color: #fff;
+}
+
+
+/* action上のオーバーレイ */
+.mainOverlay {
+  width: 100%;
+  z-index: 10;
+  padding: 6px 10px 8px 10px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+#ueno {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#shitano {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+/* ueno */
+#gameValue {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 50px;
+  margin-top: 5px;
+}
+
+#score {
+  position: absolute;
+  left: 10px;
+}
+
+#center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#targetDisplay {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #d9534f;
+  line-height: 1.1;
+}
+
+#gameTimer {
+  position: absolute;
+  right: 10px;
+}
+
+
+/* shitano */
+.mainBtn {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 5px 0;
+}
+
+#prepareArea {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+  pointer-events: auto;
+}
+
+#prepareHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  gap: 5px;
+  background-color: #f0f0f0f0;
+  user-select: none;
+}
+
+#tefuda {
+  margin: 0;
+  color: #333;
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+#toggleHandBtn {
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  line-height: 1;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+
+#handAreaWrapper {
+  max-height: 160px;
+  transition: max-heght 0.25s ease-in-out, opacity 0.2s ease;
+  opacity: 1;
+}
+
+#prepareArea.closed #handAreaWrapper {
+  max-height: 0;
+  opacity: 0;
+}
+
+#handArea {
+  border-top: 1px solid #bbb;
+  min-height: 75px;
+  padding: 6px;
+  background-color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+
+/* カードの見た目 */
+.card {
+  width: 75px;
+  height: 50px;
+  background: #fff;
+  border: 2px solid #333;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.1s;
+  box-sizing: border-box;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+.card:hover:not(.disabled) {
+  transform: translateY(-2px);
+}
+
+.card:active {
+  cursor: grabbing;
+}
+.card:active:not(.disabled) {
+  cursor: grabbing;
+}
+
+/* 手札で使用済みカード */
+.card.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+#fieldArea .card {
+  position: absolute;
+  margin: 0;
+  cursor: grab;
+}
+
+
+.card .era-name {
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.1;
+  pointer-events: none;
+}
+
+.card .era-year {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 4px;
+  pointer-events: none;
+}
+
+
+
+
+
+/* モーダル */
+#modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalContent {
+    background-color: white;
+    padding: 20px;
+    width: 75%;
+    max-width: 600px;
+    max-height: 75%;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+#modalOverlay.active {
+    display: flex;
+}
+
+#modalTitle{
+    align-self: center;
+    line-height: 0.1;
+}
+
+#modalBody {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding-right: 10px;
+    border-bottom: 1px solid #eee;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#closeModalBtn {
+    align-self: center;
+    padding: 8px 24px;
+    cursor: pointer;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+/* 元号一覧 */
+.eraInputWrap {
+  margin: 15px 0;
+  text-align: center;
+}
+
+#inputYYYYMMDD {
+  padding: 6px;
+  font-size: 1rem;
+  width: 100px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.listGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.listItem {
+  border: 1px solid #ccc;
+  padding: 4px;
+  border-radius: 6px;
+  text-align: center;
+  background: #fafafa;
+}
+

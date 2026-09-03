@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>元号パズル</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="headerArea">
+    <h1 id="titleText">元号パズル</h1>
+    <div class="headerBtn">
+      <button id="howTo">遊び方</button>
+      <button id="openList">元号一覧</button>
+    </div>
+  </div>
+
+  <div id="modalOverlay">
+    <div id="modalContent">
+      <h3 id="modalTitle">タイトル</h3>
+      <div id="modalBody">内容</div>
+      <button id="closeModalBtn">閉じる</button>
+    </div>
+  </div>
+
+  <div id="mainArea"> 
+    <div id="actionArea">
+
+      <div id="fieldArea" class="card-container"></div>
+
+      <div id="ueno" class="mainOverlay">
+        <div id="gameValue">
+          <p id="score">現在の得点: 0 点</p>
+          <div id="center">
+            <div id="targetDisplay">目標の数値: --</div>
+            <div id="currentSum">現在の選択合計: 0</div>
+          </div>
+          <p id="gameTimer">残り時間: 90 秒</p>
+        </div>
+      </div>
+
+      <div id="shitano" class="mainOverlay">
+        <div class="mainBtn">
+          <button id="comfirm" class="headBtn" disabled>確定</button>
+          <button id="startBtn" class="headBtn">ゲーム開始 / リセット</button>
+        </div>
+
+        <div id="prepareArea">
+          <div id="prepareHeader">
+            <h4 id="tefuda">手札</h4>
+            <button id="toggleHandBtn" title="手札の開閉">▼</button>
+          </div>
+          <div id="handAreaWrapper">
+            <div id="handArea" class="card-container"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
