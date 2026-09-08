@@ -10,3 +10,4 @@
 1. 「確定」を押すと誤差に応じてスコアが獲得できます。
 * 「現在の選択合計」に用いられる数字は「元年の西暦」です。
 - 制限時間は90秒です。
+![eraPuzzleExplain](https://nekukoro.github.io/eraPuzzle/eraPuzzleExplain.PNG)
