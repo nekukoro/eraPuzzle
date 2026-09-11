@@ -225,6 +225,7 @@ confirmBtn.addEventListener("click", () => {
   } else {
     gainedScore = Math.max(0, gainedScore - isSpeed * 10);
   };
+  gainedScore = Math.ceil(gainedScore);
   console.log(`速度: ${isSpeed}, 誤差: ${diff}, 得点: ${gainedScore}`);
 
   totalScore += gainedScore;
