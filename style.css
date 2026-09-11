@@ -24,13 +24,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #eee;
   padding: 10px 0;
 }
 
 #titleText {
   margin: 0;
-  font-size: 1.5rem;
+  font-size:clamp(1.1rem, 4vw, 1.4rem);
 }
 
 .headerBtn {
@@ -46,7 +45,7 @@ button {
   border-radius: 10px;
   border: 1px solid #ccc;
   background-color: #fff;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
   color: #555;
   cursor: pointer;
@@ -129,37 +128,69 @@ button:disabled {
 #gameValue {
   position: relative;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   min-height: 50px;
-  margin-top: 5px;
+  margin-top: 1%;
 }
 
-#score {
-  position: absolute;
-  left: 10px;
+#score, #center, #gameTimer {
+  position: static;
+  transform: none;
+  margin: 0;
+}
+
+#score, #gameTimer {
+  font-size: 0.9rem;
+  font-weight: bold;
 }
 
 #center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 #targetDisplay {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: #d9534f;
   line-height: 1.1;
 }
 
-#gameTimer {
-  position: absolute;
-  right: 10px;
+#currentSum {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #333;
 }
+
+
+/* 横幅が狭い場合のレイアウト */
+@media screen and (max-width: 600px) {
+  #gameValue {
+    justify-content: space-between;
+  }
+
+  #score {
+    order: 1;
+  }
+
+  #gameTimer {
+    order: 2;
+  }
+
+  #center {
+    order: 3;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  #targetDisplay {
+    font-size: 1.2rem;
+  }
+}
+
 
 
 /* 下の */
