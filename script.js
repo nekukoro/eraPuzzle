@@ -11,6 +11,11 @@ let draggedCard = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
 let isFromHand = false;
+let dragGhost = null;
+let startPointerX = 0;
+let startPointerY = 0;
+let hasDragged = false;
+let preventNextClick = false;
 
 // ゲームタイマー
 const GAME_TIME_LIMIT = 90;
@@ -93,10 +98,10 @@ function createCardElement(era, cardId) {
   `;
 
   // ドラッグイベント
-  card.addEventListener("dragstart", (e) => startDrag(e, card, true));
+  card.addEventListener("pointerdown", (e) => startDrag(e, card, true));
   // タップ/クリックでも移動可能
   card.addEventListener("click", () => {
-    if (card.classList.contains("disabled")) return;
+    if (card.classList.contains("disabled") || isGameOver) return;
     
     const cardRect = card.getBoundingClientRect();
     const fieldRect = fieldArea.getBoundingClientRect();
@@ -114,29 +119,11 @@ function createCardElement(era, cardId) {
 
 
 
-// ドラッグ開始の共通処理
-function startDrag(e, card, fromHand) {
-  if (card.classList.contains("disabled")) return e.preventDefault();
-  draggedCard = card;
-  isFromHand = fromHand;
-  const rect = card.getBoundingClientRect(); // 要素の表示上の位置大きさを取得
-  dragOffsetX = e.clientX - rect.left;
-  dragOffsetY = e.clientY - rect.top;
-  e.dataTransfer.setData("text/plain", "");
-}
-
-// 手札カードからフィールドへ配置
-function placeCloneToField(handCard, x, y) {
-  const clone = createFieldClone(handCard, x, y);
-  fieldArea.appendChild(clone);
-  handCard.classList.add("disabled");
-  updateFieldSum();
-}
-
+// ドラッグ管理
 // フィールド用の複製カードを生成
 function createFieldClone(handCard, x, y) {
   const clone = handCard.cloneNode(true);
-  clone.addEventListener("dragstart", (e) => startDrag(e, clone, false));
+  clone.addEventListener("pointerdown", (e) => startDrag(e, clone, false));
   clone.addEventListener("click", () => removeCloneFromField(clone));
   setPosition(clone, x, y);
   return clone;
@@ -158,6 +145,14 @@ function setPosition(el, x, y) {
   el.style.top = `${Math.min(Math.max(minY, y), maxY)}px`;
 }
 
+// 手札カードからフィールドへ配置
+function placeCloneToField(handCard, x, y) {
+  const clone = createFieldClone(handCard, x, y);
+  fieldArea.appendChild(clone);
+  handCard.classList.add("disabled");
+  updateFieldSum();
+}
+
 // フィールドカードの削除・手札の復帰
 function removeCloneFromField(clone) {
   const cardId = clone.dataset.cardId;
@@ -167,29 +162,104 @@ function removeCloneFromField(clone) {
   updateFieldSum();
 }
 
-// ドラッグ＆ドロップ
-actionArea.addEventListener("dragover", (e) => e.preventDefault());
 
-actionArea.addEventListener("drop", (e) => {
+window.addEventListener("click", (e) => {
+  if (preventNextClick) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    preventNextClick = false;
+  }
+}, true);
+
+
+// ドラッグ開始処理
+function startDrag(e, card, fromHand) {
+  if (e.button !== undefined && e.button !== 0) return;
+  if (card.classList.contains("disabled") || isGameOver) return;
+  draggedCard = card;
+  isFromHand = fromHand;
+  const rect = card.getBoundingClientRect(); // 要素の表示上の位置大きさを取得
+  startPointerX = e.clientX;
+  startPointerY = e.clientY;
+  dragOffsetX = e.clientX - rect.left;
+  dragOffsetY = e.clientY - rect.top;
+
+  dragGhost = card.cloneNode(true);
+  dragGhost.style.position = "fixed";
+  dragGhost.style.pointerEvents = "none";
+  dragGhost.style.zIndex = "9999";
+  dragGhost.style.opacity = "0.85";
+  dragGhost.style.width = `${rect.width}px`;
+  dragGhost.style.height = `${rect.height}px`;
+  dragGhost.style.left = `${e.clientX - dragOffsetX}px`;
+  dragGhost.style.top = `${e.clientY - dragOffsetY}px`;
+  document.body.appendChild(dragGhost);
+
+  if (!isFromHand) {
+    card.style.opacity = "0.2";
+  }
+
   e.preventDefault();
+}
+
+
+// 移動中
+window.addEventListener("pointermove", (e)=> {
+  if (!draggedCard || !dragGhost) return;
+
+  // 5px以上移動したらドラッグと認定
+  if (!hasDragged && Math.hypot(e.clientX - startPointerX, e.clientY - startPointerY) > 5) {
+    hasDragged = true;
+  }
+  dragGhost.style.left = `${e.clientX - dragOffsetX}px`;
+  dragGhost.style.top = `${e.clientY - dragOffsetY}px`;
+})
+
+
+// 離した時
+window.addEventListener("pointerup", (e) => {
   if (!draggedCard) return;
+  if (dragGhost) {
+    dragGhost.remove();
+    dragGhost = null;
+  }
+  if (!isFromHand) {
+    draggedCard.style.opacity = "1";
+  }
+  if (!hasDragged) {
+    draggedCard = null;
+    isFromHand = false;
+    return;
+  }
 
-  const toHand = e.target.closest("#handArea");
-  const fieldRect = fieldArea.getBoundingClientRect();
-  const x = e.clientX - fieldRect.left - dragOffsetX;
-  const y = e.clientY - fieldRect.top - dragOffsetY;
+  if (hasDragged) {
+    preventNextClick = true;
+    const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+    const toHand = dropTarget ? dropTarget.closest("#handArea") : null;
+    const fieldRect = fieldArea.getBoundingClientRect();
+    const x = e.clientX - fieldRect.left - dragOffsetX;
+    const y = e.clientY - fieldRect.top - dragOffsetY;
 
-  if (isFromHand && !toHand) {
-    placeCloneToField(draggedCard, x, y);
-  } else if (!isFromHand && toHand) {
-    removeCloneFromField(draggedCard);
-  } else if (!isFromHand && !toHand) {
-    setPosition(draggedCard, x, y);
+    if (isFromHand && !toHand) {
+      placeCloneToField(draggedCard, x, y);
+    } else if (!isFromHand && toHand) {
+      removeCloneFromField(draggedCard);
+    } else if (!isFromHand && !toHand) {
+      setPosition(draggedCard, x, y);
+      updateFieldSum();
+    }
   }
 
   draggedCard = null;
   isFromHand = false;
-});
+  hasDragged = false;
+
+  setTimeout(() => {
+    preventNextClick = false;
+  }, 200);
+})
+
+
 
 
 
